@@ -2,15 +2,26 @@ package com.example.demo1.Service;
 
 import com.example.demo1.Dao.IUserDao;
 import com.example.demo1.Entity.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Api(tags = "用户管理相关接口")
 @RequestMapping("/api/User")
 public class UserApi {
     @Autowired
     private IUserDao userDao;
+
    @GetMapping("/login/{id}/{password}")
+   @ApiOperation("用户登录的接口")
+   @ApiImplicitParams({
+           @ApiImplicitParam(name = "name", value = "用户名", defaultValue = "admin", required = true),
+           @ApiImplicitParam(name = "password", value = "密码", defaultValue = "123456", required = true)
+   })
     public String login(@PathVariable String id,@PathVariable String password){
        User u=userDao.findUserByIdAndPassword(id,password);
        if(u==null){
@@ -18,7 +29,12 @@ public class UserApi {
        }
            return "Welcome"+u.getName()+"!";
    }
-   @PostMapping("/login")
+   @PostMapping("/login1")
+   @ApiOperation("用户登录的接口")
+   @ApiImplicitParams({
+           @ApiImplicitParam(name = "name", value = "用户名", defaultValue = "admin", required = true),
+           @ApiImplicitParam(name = "password", value = "密码", defaultValue = "123456", required = true)
+   })
     public String loginByIdAndPassword(@RequestParam String id,@RequestParam String password){
        User u=userDao.findUserByIdAndPassword(id,password);
        if(u==null){
@@ -26,7 +42,23 @@ public class UserApi {
        }
        return "Welcome"+u.getName()+"!";
    }
+    @PostMapping("/login2")
+    @ApiOperation("用户登录的接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "用户名", defaultValue = "admin", required = true),
+            @ApiImplicitParam(name = "password", value = "密码", defaultValue = "123456", required = true)
+    })
+    public User loginByIdAndPassword2(@RequestBody User u){
+        u=userDao.findUserByIdAndPassword(u.getId(),u.getPassword());
+        return  u;
+    }
+
    @PostMapping("/register")
+   @ApiOperation("用户注册的接口")
+   @ApiImplicitParams({
+           @ApiImplicitParam(name = "name", value = "用户名", defaultValue = "admin", required = true),
+           @ApiImplicitParam(name = "password", value = "密码", defaultValue = "123456", required = true)
+   })
     public String registerUser(@RequestParam String id,@RequestParam String name,@RequestParam String password,@RequestParam int age,@RequestParam boolean sex){
        if(id==null){
            return "Please complete the id";
@@ -48,6 +80,8 @@ public class UserApi {
    }
 
     @PostMapping("/register2")
+    @ApiOperation("用户注册的接口2")
+        @ApiImplicitParam(name = "user", value = "用户JSION数据", defaultValue = "123456", required = true)
     public String registerUser2(@RequestBody User user){
 
         try {
